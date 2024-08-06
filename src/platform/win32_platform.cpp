@@ -14,7 +14,7 @@ LRESULT CALLBACK platform_window_callback(HWND window, UINT msg, WPARAM wParam, 
     return DefWindowProcA(window, msg, wParam, lParam);
 }
 
-bool platform_create_window(HWND window)
+bool platform_create_window(HWND *window)
 {
     HINSTANCE instance = GetModuleHandle(0);
 
@@ -26,24 +26,24 @@ bool platform_create_window(HWND window)
 
     if(!RegisterClassA(&wc)) 
     {
-        MessageBoxA(window, "Failed registering window class", "Error", MB_ICONEXCLAMATION | MB_OK);
+        MessageBoxA(0, "Failed registering window class", "Error", MB_ICONEXCLAMATION | MB_OK);
         return false;
     }
 
-    window = CreateWindowExA(
+    *window = CreateWindowExA(
         WS_EX_APPWINDOW,
         "vulkan_engine_class",
         "Alone",
         WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_OVERLAPPED,
         100, 100, 1600, 720, 0, 0, instance, 0);
 
-    if(window == 0) 
+    if(*window == 0) 
     {
-        MessageBoxA(window, "Failed creating window", "Error", MB_ICONEXCLAMATION | MB_OK);
+        MessageBoxA(0, "Failed creating window", "Error", MB_ICONEXCLAMATION | MB_OK);
         return false;
     }
 
-    ShowWindow(window, SW_SHOW);
+    ShowWindow(*window, SW_SHOW);
 
     return true;
 }
@@ -63,18 +63,19 @@ int main()
 {
     VkContext vkcontext = {};
     HWND window = 0;
-    if(!platform_create_window(window))
+    if(!platform_create_window(&window))
     {
         return -1;
     }
 
-    if(!vk_init(&vkcontext))
+    if(!vk_init(&vkcontext, window))
     {
         return -1;
     }
 
     while(running){
         platform_update_window(window);
+        vk_render(&vkcontext);
     }
 
     return 0;

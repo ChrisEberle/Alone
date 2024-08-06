@@ -2,5 +2,9 @@
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/src",
         "${VULKAN_SDK}/Include"
-    ]
+    ],
+    "files.associations": {
+        "xlocale": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }
